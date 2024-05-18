@@ -1,17 +1,16 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "blindtestmobile",
+  "module": "index.ts",
   "type": "module",
-  "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   },
   "dependencies": {
-    "nuxt": "^3.11.2",
-    "vue": "^3.4.27",
-    "vue-router": "^4.3.2"
+    "@types/express": "^4.17.21",
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
   }
 }
