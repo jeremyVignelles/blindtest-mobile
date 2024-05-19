@@ -7,7 +7,6 @@ import type Team from '@/types/team'
 export interface SocketService {
   createTeam(teamName: string): Promise<string>
   joinTeam(teamId: string): void
-  refreshTeams(): void
   register(playerName: string): void
 }
 
@@ -66,10 +65,6 @@ const plugin: Plugin = function (app) {
     })
   }
 
-  function refreshTeams() {
-    socket.emit('refreshTeams')
-  }
-
   function register(playerName: string) {
     socket.emit('register', playerName, (success: boolean) => {
       if (success) {
@@ -84,7 +79,6 @@ const plugin: Plugin = function (app) {
   const socketService: SocketService = {
     createTeam,
     joinTeam,
-    refreshTeams,
     register
   }
 

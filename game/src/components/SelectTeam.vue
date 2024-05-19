@@ -43,7 +43,7 @@ async function createTeam() {
             <QInput v-model="newTeamName" label="Nom de l'équipe" />
           </QItemSection>
           <QItemSection side>
-            <QBtn @click="createTeam" label="Créer l'équipe" />
+            <QBtn :disable="!newTeamName" @click="createTeam" label="Créer l'équipe" />
           </QItemSection>
         </QItem>
       </QList>

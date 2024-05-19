@@ -2,6 +2,7 @@
 import { ref, inject } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 import { socketSymbol } from '@/plugins/socket'
+import TeamCard from '@/components/TeamCard.vue'
 const gameStore = useGameStore()
 
 const socketService = inject(socketSymbol)!
@@ -31,17 +32,26 @@ const leftDrawerOpen = ref(false)
     </q-drawer>
 
     <q-page-container>
-      <main>
-        <ul>
-          <li v-for="team in gameStore.globalGameState.teams" :key="team.id">
-            {{ team.name }}
-            <ul>
-              <li v-for="player in team.members" :key="player.id">
-                {{ player.name }}
-              </li>
-            </ul>
-          </li>
-        </ul>
+      <main class="q-pa-md">
+        <div class="row q-col-gutter-md">
+          <div v-for="team in gameStore.globalGameState.teams" :key="team.id" class="col-3">
+            <team-card :team="team" />
+          </div>
+          <div class="col-3" v-if="gameStore.globalGameState.unjoinedPlayers.length > 0">
+            <q-card>
+              <q-card-section class="bg-purple text-white">
+                <span class="text-h4">??</span>
+              </q-card-section>
+              <q-card-section>
+                <ul>
+                  <li v-for="player in gameStore.globalGameState.unjoinedPlayers" :key="player.id">
+                    {{ player.name }}
+                  </li>
+                </ul>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
       </main>
     </q-page-container>
   </q-layout>

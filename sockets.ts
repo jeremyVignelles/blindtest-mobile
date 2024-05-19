@@ -92,6 +92,7 @@ export function useSockets(io: Server) {
         })
         ack(true)
         io.of('/admin').emit('state', globalState)
+        io.of('/').emit('teams', globalState.teams)
       })
     })
   }
