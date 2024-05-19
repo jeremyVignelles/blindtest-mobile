@@ -3,7 +3,7 @@ import { Quasar } from 'quasar'
 import quasarLang from 'quasar/lang/fr'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-import socket from '@/services/socket'
+import socket from '@/plugins/socket'
 
 // Import Quasar css
 import 'quasar/dist/quasar.css'
@@ -21,6 +21,6 @@ app.use(Quasar, {
 
 app.use(pinia)
 
-app.mount('#app')
-
 app.use(socket)
+
+app.mount('#app')

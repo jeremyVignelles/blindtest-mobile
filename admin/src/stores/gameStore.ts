@@ -1,17 +1,16 @@
-import type Team from '@/types/team'
-import type Player from '@/types/player'
+import type GlobalGameState from '@/types/globalGameState'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useSessionStorage } from '@vueuse/core'
 
 export const useGameStore = defineStore('game', () => {
   const isConnected = ref(false)
-  const teams = useSessionStorage<Team[]>('teams', [])
-  const unjoinedPlayers = useSessionStorage<Player[]>('unjoinedPlayers', [])
+  const globalGameState = ref<GlobalGameState>({
+    teams: [],
+    unjoinedPlayers: []
+  })
 
   return {
     isConnected,
-    teams,
-    unjoinedPlayers
+    globalGameState
   }
 })

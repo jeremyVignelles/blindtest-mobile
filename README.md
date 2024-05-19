@@ -21,7 +21,7 @@ popd
 Server:
 
 ```bash
-bun run index.ts
+bun --watch run index.ts
 ```
 
 Frontend game:
@@ -40,5 +40,21 @@ bun run dev
 
 ## Events
 
-| Event | Direction | Description | Payload |
-| ----- | --------- | ----------- | ------- |
+NOTE: for the "Directions column":
+
+- S means Server
+- A means Admin socket
+- G means Game socket
+- T means all Game sockets in a specific Team
+
+| Event          | Direction | Description                                                                        | Payload           | Response          |
+| -------------- | --------- | ---------------------------------------------------------------------------------- | ----------------- | ----------------- |
+| `createTeam`   | G -> S    | Creates a new team                                                                 | `name: string`    | `teamId: string`  |
+| `join`         | G -> S    | Joins a team                                                                       | `teamId: string`  | `success:boolean` |
+| `refreshTeams` | G -> S    | Asks the server to send an unicast `teams` event                                   |                   |                   |
+| `register`     | G -> S    | Registers a new player by its name. Once done, the server sends an unicast `state` | `name: string`    |                   |
+| `reset`        | A -> S    | Resets the game and the game sockets                                               |                   |                   |
+| `reset`        | S -> G    | This game is over, reset your state and disconnect                                 |                   |                   |
+| `state`        | S -> A    | Notifies that the game state has changed. Gives the new state                      | `GlobalGameState` |                   |
+| `state`        | S -> T    | Notifies that the visible state for this team has changed. Gives the new state     | `GameState`       |                   |
+| `teams`        | S -> G    | Sends the list of teams and their players                                          | `Team[]`          |                   |
