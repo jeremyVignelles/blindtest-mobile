@@ -1,15 +1,44 @@
-# blindtestmobile
+# BlindTestMobile
 
-To install dependencies:
+## Prerequisites
+
+The easiest way to install all dependencies is to use vscode in devcontainer mode
+
+## Installation
 
 ```bash
 bun install
+pushd client
+bun install
+popd
+pushd admin
+bun install
+popd
 ```
 
-To run:
+## Running
+
+Server:
 
 ```bash
 bun run index.ts
 ```
 
-This project was created using `bun init` in bun v1.1.8. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+Frontend game:
+
+```bash
+cd client
+bun run dev
+```
+
+Frontend admin:
+
+```bash
+cd admin
+bun run dev
+```
+
+## Events
+
+| Event | Direction | Description | Payload |
+| ----- | --------- | ----------- | ------- |
