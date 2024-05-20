@@ -11,6 +11,7 @@ if (gameStore.playerName) {
 }
 
 function register() {
+  if (!playerName.value) return
   gameStore.playerName = playerName.value
   socketService.register(playerName.value)
 }
@@ -25,7 +26,7 @@ function register() {
         <q-input v-model="playerName" label="Votre nom" />
       </q-card-section>
       <q-card-actions align="stretch" vertical>
-        <q-btn type="submit">J'arrive !</q-btn>
+        <q-btn :disabled="!playerName" type="submit">J'arrive !</q-btn>
       </q-card-actions>
     </q-card>
   </q-form>

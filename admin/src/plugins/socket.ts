@@ -3,9 +3,13 @@ import { useGameStore } from '@/stores/gameStore'
 import { storeToRefs } from 'pinia'
 import type { InjectionKey, Plugin } from 'vue'
 import type GlobalGameState from '@/types/globalGameState'
+import type GameStep from '@/types/gameStep'
 
 export interface SocketService {
   reset: () => void
+  nextTurn: () => void
+  stopTurn: () => void
+  loadGame: (steps: GameStep[]) => void
 }
 
 export const socketSymbol = Symbol('socket') as InjectionKey<SocketService>
@@ -38,6 +42,15 @@ const plugin: Plugin = function (app) {
   const socketService: SocketService = {
     reset() {
       socket.emit('reset')
+    },
+    nextTurn() {
+      socket.emit('nextTurn')
+    },
+    stopTurn() {
+      socket.emit('stopTurn')
+    },
+    loadGame(steps: GameStep[]) {
+      socket.emit('load', steps)
     }
   }
 

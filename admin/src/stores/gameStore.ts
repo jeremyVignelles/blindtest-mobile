@@ -6,7 +6,9 @@ export const useGameStore = defineStore('game', () => {
   const isConnected = ref(false)
   const globalGameState = ref<GlobalGameState>({
     teams: [],
-    unjoinedPlayers: []
+    unjoinedPlayers: [],
+    steps: [],
+    turns: []
   })
 
   return {
