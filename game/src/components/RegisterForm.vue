@@ -17,17 +17,19 @@ function register() {
 }
 </script>
 <template>
-  <q-form @submit="register">
-    <q-card>
-      <q-card-section>
-        <span class="text-h3">Rejoindre le jeu</span>
-      </q-card-section>
-      <q-card-section>
-        <q-input v-model="playerName" label="Votre nom" />
-      </q-card-section>
-      <q-card-actions align="stretch" vertical>
-        <q-btn :disabled="!playerName" type="submit">J'arrive !</q-btn>
-      </q-card-actions>
-    </q-card>
-  </q-form>
+  <q-page>
+    <q-form @submit="register">
+      <q-card>
+        <q-card-section>
+          <span class="text-h3">Rejoindre le jeu</span>
+        </q-card-section>
+        <q-card-section>
+          <q-input v-model="playerName" label="Votre nom" />
+        </q-card-section>
+        <q-card-actions align="stretch" vertical>
+          <q-btn :disabled="!playerName" type="submit">J'arrive !</q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-form>
+  </q-page>
 </template>

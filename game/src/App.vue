@@ -8,14 +8,18 @@ const { isConnected, playerRegistered, teamJoined } = storeToRefs(useGameStore()
 </script>
 
 <template>
-  <main>
-    <q-inner-loading v-if="!isConnected">
-      <q-spinner-bars />
-    </q-inner-loading>
-    <register-form v-else-if="!playerRegistered" />
-    <select-team v-else-if="!teamJoined" />
-    <game-view v-else />
-  </main>
+  <q-layout>
+    <q-page-container>
+      <q-page v-if="!isConnected">
+        <q-inner-loading>
+          <q-spinner-bars />
+        </q-inner-loading>
+      </q-page>
+      <register-form v-else-if="playerRegistered === null" />
+      <select-team v-else-if="!teamJoined" />
+      <game-view v-else />
+    </q-page-container>
+  </q-layout>
 </template>
 
 <style scoped></style>

@@ -4,9 +4,11 @@ import { storeToRefs } from 'pinia'
 import type { InjectionKey, Plugin } from 'vue'
 import type Team from '@/types/team'
 import type TeamState from '@/types/teamState'
+import type { GuessResult } from '@/types/guessResult'
 
 export interface SocketService {
   createTeam(teamName: string): Promise<string>
+  guess(guess: string): Promise<GuessResult>
   joinTeam(teamId: string): void
   register(playerName: string): void
 }
@@ -54,6 +56,13 @@ const plugin: Plugin = function (app) {
       })
     })
   }
+  function guess(guess: string) {
+    return new Promise<GuessResult>((resolve) => {
+      socket.emit('guess', guess, (guessResult: GuessResult) => {
+        resolve(guessResult)
+      })
+    })
+  }
 
   function joinTeam(teamId: string) {
     socket.emit('join', teamId, (success: boolean) => {
@@ -67,10 +76,10 @@ const plugin: Plugin = function (app) {
   }
 
   function register(playerName: string) {
-    socket.emit('register', playerName, (success: boolean) => {
-      if (success) {
+    socket.emit('register', playerName, (userId: string | null) => {
+      if (userId) {
         console.log('registered')
-        playerRegistered.value = true
+        playerRegistered.value = userId
       } else {
         console.log('failed to register')
       }
@@ -79,6 +88,7 @@ const plugin: Plugin = function (app) {
 
   const socketService: SocketService = {
     createTeam,
+    guess,
     joinTeam,
     register
   }

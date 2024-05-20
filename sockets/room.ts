@@ -9,6 +9,7 @@ export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
     const currentTurn = globalState.value.turns.length
     const totalSteps = globalState.value.steps.length
     const turn = currentTurn > 0 ? globalState.value.turns[currentTurn - 1] : null
+    const step = totalSteps > 0 ? globalState.value.steps[currentTurn - 1] : null
     globalState.value.teams.forEach((team) => {
       const score = globalState.value.turns.reduce((acc, turn) => {
         if (turn.teamReplies[team.id]) {
@@ -20,6 +21,10 @@ export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
         }
         return acc
       }, 0)
+      const teamHasFoundArtist =
+        turn?.teamReplies[team.id]?.some((reply) => reply.isArtistCorrect) ?? false
+      const teamHasFoundTitle =
+        turn?.teamReplies[team.id]?.some((reply) => reply.isTitleCorrect) ?? false
       state[team.id] = {
         name: team.name,
         members: team.members,
@@ -27,6 +32,8 @@ export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
         currentTurn: currentTurn,
         totalSteps: totalSteps,
         acceptAnswers: turn?.acceptAnswers ?? false,
+        waitingForArtist: !!step?.artist && !teamHasFoundArtist,
+        waitingForTitle: !!step?.title && !teamHasFoundTitle,
         replies: turn?.teamReplies[team.id] ?? []
       }
     })

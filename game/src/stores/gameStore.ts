@@ -7,19 +7,23 @@ import type TeamState from '@/types/teamState'
 export const useGameStore = defineStore('game', () => {
   const isConnected = ref(false)
   const gameState = ref<TeamState | null>(null)
-  const playerRegistered = ref(false)
+  const playerRegistered = ref<string | null>(null)
   const teamJoined = ref(false)
   const playerName = useSessionStorage<string | null>('playerName', null)
   function $reset() {
     playerName.value = null
     teamId.value = null
     teams.value = []
-    playerRegistered.value = false
+    playerRegistered.value = null
     teamJoined.value = false
     isConnected.value = false
   }
   const teamId = useSessionStorage<string | null>('teamId', null)
   const teams = ref<Team[]>([])
+
+  function resolveName(userId: string) {
+    return gameState.value?.members.find((m) => m.id === userId)?.name ?? '??'
+  }
 
   return {
     isConnected,
@@ -27,6 +31,7 @@ export const useGameStore = defineStore('game', () => {
     playerName,
     playerRegistered,
     $reset,
+    resolveName,
     teamId,
     teamJoined,
     teams
