@@ -3,8 +3,6 @@ import { ref, inject } from 'vue'
 import { socketSymbol } from '@/plugins/socket'
 import { useGameStore } from '@/stores/gameStore'
 
-import { QCard, QCardSection, QForm, QInput, QBtn } from 'quasar'
-
 const socketService = inject(socketSymbol)!
 const gameStore = useGameStore()
 const playerName = ref(gameStore.playerName ?? '')

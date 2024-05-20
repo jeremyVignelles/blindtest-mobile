@@ -6,7 +6,9 @@ import makeLogger from './logger'
 export function useSockets(io: Server) {
   let globalState: GlobalGameState = {
     teams: [],
-    unjoinedPlayers: []
+    unjoinedPlayers: [],
+    steps: [],
+    turns: []
   }
 
   useAdminSocket(io)
@@ -26,7 +28,9 @@ export function useSockets(io: Server) {
         io.of('/').sockets.forEach((s) => s.disconnect(true))
         globalState = {
           teams: [],
-          unjoinedPlayers: []
+          unjoinedPlayers: [],
+          steps: [],
+          turns: []
         }
         adms.emit('state', globalState)
       })
