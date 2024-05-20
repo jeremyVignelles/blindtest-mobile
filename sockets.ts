@@ -2,37 +2,71 @@ import type { Server } from 'socket.io'
 import type GlobalGameState from './common/types/globalGameState'
 import { randomUUID } from 'crypto'
 import makeLogger from './logger'
+import { ref, effect, computed, type ReactiveEffectRunner } from '@vue/reactivity'
+import type TeamState from './common/types/teamState'
 
 export function useSockets(io: Server) {
-  let globalState: GlobalGameState = {
+  const globalState = ref<GlobalGameState>({
     teams: [],
     unjoinedPlayers: [],
     steps: [],
     turns: []
-  }
+  })
 
   useAdminSocket(io)
   useGameSocket(io)
+  useRooms(io)
+
+  const teams = computed(() => globalState.value.teams)
+
+  effect(() => {
+    io.of('/').emit('teams', teams.value)
+  })
+
+  const teamsState = computed<Record<string, TeamState>>(() => {
+    const state: Record<string, TeamState> = {}
+    const currentTurn = globalState.value.turns.length
+    const totalSteps = globalState.value.steps.length
+    const turn = currentTurn > 0 ? globalState.value.turns[currentTurn - 1] : null
+    globalState.value.teams.forEach((team) => {
+      state[team.id] = {
+        name: team.name,
+        members: team.members,
+        score: team.score,
+        currentTurn: currentTurn,
+        totalSteps: totalSteps,
+        acceptAnswers: turn?.acceptAnswers ?? false,
+        replies: turn?.teamReplies[team.id] ?? []
+      }
+    })
+    return state
+  })
 
   function useAdminSocket(io: Server) {
     const adms = io.of('/admin')
     adms.on('connection', (socket) => {
       const logger = makeLogger('admin ' + randomUUID())
       logger.log('connected')
-      socket.emit('state', globalState)
+      const updateStateEffect = effect(() => {
+        socket.emit('state', globalState.value)
+      })
+
+      socket.on('disconnect', () => {
+        logger.log('disconnected')
+        updateStateEffect.effect.stop()
+      })
 
       socket.on('reset', () => {
         logger.log('reset')
         io.of('/').emit('reset')
         // Close all sockets
         io.of('/').sockets.forEach((s) => s.disconnect(true))
-        globalState = {
+        globalState.value = {
           teams: [],
           unjoinedPlayers: [],
           steps: [],
           turns: []
         }
-        adms.emit('state', globalState)
       })
     })
   }
@@ -44,45 +78,50 @@ export function useSockets(io: Server) {
       const logger = makeLogger('game ' + socket.data.playerId)
       logger.log('connected')
 
+      socket.emit('teams', teams.value)
+
       socket.on('disconnect', () => {
         logger.log('disconnected')
-        globalState.unjoinedPlayers = globalState.unjoinedPlayers.filter(
-          (p) => p.id !== socket.data.playerId
+        const unjoinedPlayerIndex = globalState.value.unjoinedPlayers.findIndex(
+          (p) => p.id === socket.data.playerId
         )
-        globalState.teams.forEach((team) => {
-          team.members = team.members.filter((m) => m.id !== socket.data.playerId)
+        if (unjoinedPlayerIndex !== -1) {
+          globalState.value.unjoinedPlayers.splice(unjoinedPlayerIndex, 1)
+        }
+        globalState.value.teams.forEach((team) => {
+          const memberIndex = team.members.findIndex((m) => m.id === socket.data.playerId)
+          if (memberIndex !== -1) {
+            team.members.splice(memberIndex, 1)
+          }
         })
-        // TODO: si en cours de jeu, rafraîchir le state des rooms
-        io.of('/').emit('teams', globalState.teams)
-        io.of('/admin').emit('state', globalState)
       })
 
       socket.on('createTeam', (teamName: string, cb: (teamId: string) => void) => {
         logger.log('createTeam', teamName)
         const teamId = randomUUID()
-        globalState.teams.push({
+        globalState.value.teams.push({
           id: teamId,
           name: teamName,
           members: [],
           score: 0
         })
         cb(teamId)
-        io.of('/').emit('teams', globalState.teams)
-        io.of('/admin').emit('state', globalState)
       })
 
       socket.on('join', (teamId: string, ack: (success: boolean) => void) => {
         logger.log('join', teamId)
-        const team = globalState.teams.find((t) => t.id === teamId)
-        const pendingPlayer = globalState.unjoinedPlayers.find((p) => p.id === socket.data.playerId)
+        const team = globalState.value.teams.find((t) => t.id === teamId)
+        const pendingPlayer = globalState.value.unjoinedPlayers.find(
+          (p) => p.id === socket.data.playerId
+        )
         if (team && pendingPlayer) {
+          socket.data.teamId = teamId
+          socket.join(teamId)
           team.members.push(pendingPlayer)
-          globalState.unjoinedPlayers = globalState.unjoinedPlayers.filter(
+          globalState.value.unjoinedPlayers = globalState.value.unjoinedPlayers.filter(
             (p) => p.id !== socket.data.playerId
           )
           ack(true)
-          io.of('/').emit('teams', globalState.teams)
-          io.of('/admin').emit('state', globalState)
         } else {
           ack(false)
         }
@@ -90,14 +129,29 @@ export function useSockets(io: Server) {
 
       socket.on('register', (playerName: string, ack: (success: boolean) => void) => {
         logger.log('register', playerName)
-        globalState.unjoinedPlayers.push({
+        globalState.value.unjoinedPlayers.push({
           id: socket.data.playerId,
           name: playerName
         })
         ack(true)
-        io.of('/admin').emit('state', globalState)
-        io.of('/').emit('teams', globalState.teams)
       })
+    })
+  }
+
+  function useRooms(io: Server) {
+    const rooms: Record<string, ReactiveEffectRunner> = {}
+    io.of('/').adapter.on('create-room', (room: string) => {
+      rooms[room] = effect(() => {
+        const roomState = teamsState.value[room] // TODO: I think this will trigger a refresh too often
+        if (roomState) {
+          io.of('/').to(room).emit('state', roomState)
+        }
+      })
+    })
+
+    io.of('/').adapter.on('delete-room', (room: string) => {
+      rooms[room].effect.stop()
+      delete rooms[room]
     })
   }
 }

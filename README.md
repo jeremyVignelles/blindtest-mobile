@@ -55,5 +55,5 @@ NOTE: for the "Directions column":
 | `reset`      | A -> S    | Resets the game and the game sockets                                               |                   |                   |
 | `reset`      | S -> G    | This game is over, reset your state and disconnect                                 |                   |                   |
 | `state`      | S -> A    | Notifies that the game state has changed. Gives the new state                      | `GlobalGameState` |                   |
-| `state`      | S -> T    | Notifies that the visible state for this team has changed. Gives the new state     | `GameState`       |                   |
+| `state`      | S -> T    | Notifies that the visible state for this team has changed. Gives the new state     | `TeamState`       |                   |
 | `teams`      | S -> G    | Sends the list of teams and their players                                          | `Team[]`          |                   |

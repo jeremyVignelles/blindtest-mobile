@@ -2,9 +2,11 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useSessionStorage } from '@vueuse/core'
 import type Team from '@/types/team'
+import type TeamState from '@/types/teamState'
 
 export const useGameStore = defineStore('game', () => {
   const isConnected = ref(false)
+  const gameState = ref<TeamState | null>(null)
   const playerRegistered = ref(false)
   const teamJoined = ref(false)
   const playerName = useSessionStorage<string | null>('playerName', null)
@@ -21,6 +23,7 @@ export const useGameStore = defineStore('game', () => {
 
   return {
     isConnected,
+    gameState,
     playerName,
     playerRegistered,
     $reset,

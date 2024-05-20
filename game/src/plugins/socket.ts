@@ -3,6 +3,7 @@ import { useGameStore } from '@/stores/gameStore'
 import { storeToRefs } from 'pinia'
 import type { InjectionKey, Plugin } from 'vue'
 import type Team from '@/types/team'
+import type TeamState from '@/types/teamState'
 
 export interface SocketService {
   createTeam(teamName: string): Promise<string>
@@ -14,7 +15,7 @@ export const socketSymbol = Symbol('socket') as InjectionKey<SocketService>
 
 const plugin: Plugin = function (app) {
   const gameStore = useGameStore()
-  const { isConnected, teamJoined, playerRegistered, teams } = storeToRefs(gameStore)
+  const { isConnected, teamJoined, playerRegistered, teams, gameState } = storeToRefs(gameStore)
   const socket = io('/', {
     transports: ['websocket'],
     path: '/ws'
@@ -30,9 +31,9 @@ const plugin: Plugin = function (app) {
     isConnected.value = false
   })
 
-  // TODO:
-  // socket.on('state', (state) => {
-  // });
+  socket.on('state', (state: TeamState) => {
+    gameState.value = state
+  })
 
   socket.on('reset', () => {
     console.log('reset')
