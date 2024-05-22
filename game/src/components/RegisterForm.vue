@@ -24,7 +24,7 @@ function register() {
           <span class="text-h3">Rejoindre le jeu</span>
         </q-card-section>
         <q-card-section>
-          <q-input v-model="playerName" label="Votre nom" />
+          <q-input v-model="playerName" outlined label="Votre nom" />
         </q-card-section>
         <q-card-actions align="stretch" vertical>
           <q-btn :disabled="!playerName" type="submit">J'arrive !</q-btn>

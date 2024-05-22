@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useSessionStorage } from '@vueuse/core'
 import type Team from '@/types/team'
 import type TeamState from '@/types/teamState'
+import { computed } from 'vue'
 
 export const useGameStore = defineStore('game', () => {
   const isConnected = ref(false)
@@ -25,6 +26,10 @@ export const useGameStore = defineStore('game', () => {
     return gameState.value?.members.find((m) => m.id === userId)?.name ?? '??'
   }
 
+  const teamName = computed(() => {
+    return teams.value.find((t) => t.id === teamId.value)?.name
+  })
+
   return {
     isConnected,
     gameState,
@@ -33,6 +38,7 @@ export const useGameStore = defineStore('game', () => {
     $reset,
     resolveName,
     teamId,
+    teamName,
     teamJoined,
     teams
   }

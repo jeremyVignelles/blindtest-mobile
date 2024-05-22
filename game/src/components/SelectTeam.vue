@@ -37,14 +37,21 @@ async function createTeam() {
               <q-btn @click="join(team.id)" label="Rejoindre" />
             </q-item-section>
           </q-item>
-          <q-item>
-            <q-item-section>
-              <q-input v-model="newTeamName" label="Nom de l'équipe" />
-            </q-item-section>
-            <q-item-section side>
-              <q-btn :disable="!newTeamName" @click="createTeam" label="Créer l'équipe" />
-            </q-item-section>
-          </q-item>
+          <q-form @submit="createTeam">
+            <q-item>
+              <q-item-section>
+                <q-input v-model="newTeamName" outlined label="Nom de l'équipe" />
+              </q-item-section>
+              <q-item-section side>
+                <q-btn
+                  type="submit"
+                  :disable="!newTeamName"
+                  color="primary"
+                  label="Créer une équipe"
+                />
+              </q-item-section>
+            </q-item>
+          </q-form>
         </q-list>
       </q-card-section>
     </q-card>
