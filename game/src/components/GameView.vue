@@ -45,7 +45,12 @@ async function guess() {
             :name="gameStore.resolveName(reply.author)"
             :sent="reply.author === playerRegistered"
             :text="[reply.answer]"
-          />
+          >
+            <template v-slot:stamp>
+              <q-icon v-if="reply.isTitleCorrect" name="label" color="green" />
+              <q-icon v-if="reply.isArtistCorrect" name="person" color="green" />
+            </template>
+          </q-chat-message>
         </q-scroll-area>
         <q-input
           ref="guessInput"
