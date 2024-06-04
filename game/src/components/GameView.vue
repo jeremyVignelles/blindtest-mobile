@@ -3,6 +3,7 @@ import { ref, inject } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useGameStore } from '@/stores/gameStore'
 import { socketSymbol } from '@/plugins/socket'
+import CorrectGuessIndicator from './CorrectGuessIndicator.vue'
 import type { QInput } from 'quasar'
 
 const socketService = inject(socketSymbol)!
@@ -45,7 +46,20 @@ async function guess() {
             :name="gameStore.resolveName(reply.author)"
             :sent="reply.author === playerRegistered"
             :text="[reply.answer]"
-          />
+          >
+            <template v-slot:stamp>
+              <correct-guess-indicator
+                v-if="reply.isTitleCorrect"
+                icon="label"
+                tooltip-text="Le titre est correct"
+              />
+              <correct-guess-indicator
+                v-if="reply.isArtistCorrect"
+                icon="person"
+                tooltip-text="L'artiste est correct"
+              />
+            </template>
+          </q-chat-message>
         </q-scroll-area>
         <q-input
           ref="guessInput"
