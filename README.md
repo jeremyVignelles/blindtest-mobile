@@ -27,7 +27,7 @@ bun --watch run index.ts
 Frontend game:
 
 ```bash
-cd client
+cd game
 bun run dev
 ```
 
