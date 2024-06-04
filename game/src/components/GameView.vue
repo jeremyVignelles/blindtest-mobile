@@ -47,8 +47,20 @@ async function guess() {
             :text="[reply.answer]"
           >
             <template v-slot:stamp>
-              <q-icon v-if="reply.isTitleCorrect" name="label" color="green" />
-              <q-icon v-if="reply.isArtistCorrect" name="person" color="green" />
+              <q-btn v-if="reply.isTitleCorrect" round flat>
+                <q-icon name="label" size="sm" />
+                <q-badge v-if="reply.isTitleCorrect" floating color="green">
+                  <q-icon name="check_circle" />
+                </q-badge>
+                <q-tooltip>Le titre est correct</q-tooltip>
+              </q-btn>
+              <q-btn v-if="reply.isArtistCorrect" round flat>
+                <q-icon name="person" size="sm" />
+                <q-badge v-if="reply.isArtistCorrect" floating color="green">
+                  <q-icon name="check_circle" />
+                </q-badge>
+                <q-tooltip>L'artiste est correct</q-tooltip>
+              </q-btn>
             </template>
           </q-chat-message>
         </q-scroll-area>
