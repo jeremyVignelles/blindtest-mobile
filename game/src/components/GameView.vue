@@ -3,6 +3,7 @@ import { ref, inject } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useGameStore } from '@/stores/gameStore'
 import { socketSymbol } from '@/plugins/socket'
+import CorrectGuessIndicator from './CorrectGuessIndicator.vue'
 import type { QInput } from 'quasar'
 
 const socketService = inject(socketSymbol)!
@@ -47,30 +48,16 @@ async function guess() {
             :text="[reply.answer]"
           >
             <template v-slot:stamp>
-              <q-btn v-if="reply.isTitleCorrect" round flat>
-                <q-icon name="label" size="sm" />
-                <q-badge
-                  v-if="reply.isTitleCorrect"
-                  floating
-                  rounded
-                  color="green"
-                  class="q-pa-none"
-                  ><q-icon name="check_circle" size="xs"
-                /></q-badge>
-                <q-tooltip>Le titre est correct</q-tooltip>
-              </q-btn>
-              <q-btn v-if="reply.isArtistCorrect" round flat>
-                <q-icon name="person" size="sm" />
-                <q-badge
-                  v-if="reply.isArtistCorrect"
-                  floating
-                  rounded
-                  color="green"
-                  class="q-pa-none"
-                  ><q-icon name="check_circle" size="xs"
-                /></q-badge>
-                <q-tooltip>L'artiste est correct</q-tooltip>
-              </q-btn>
+              <correct-guess-indicator
+                v-if="reply.isTitleCorrect"
+                icon="label"
+                tooltip-text="Le titre est correct"
+              />
+              <correct-guess-indicator
+                v-if="reply.isArtistCorrect"
+                icon="person"
+                tooltip-text="L'artiste est correct"
+              />
             </template>
           </q-chat-message>
         </q-scroll-area>
