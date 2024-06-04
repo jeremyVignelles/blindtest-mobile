@@ -49,16 +49,26 @@ async function guess() {
             <template v-slot:stamp>
               <q-btn v-if="reply.isTitleCorrect" round flat>
                 <q-icon name="label" size="sm" />
-                <q-badge v-if="reply.isTitleCorrect" floating color="green">
-                  <q-icon name="check_circle" />
-                </q-badge>
+                <q-badge
+                  v-if="reply.isTitleCorrect"
+                  floating
+                  rounded
+                  color="green"
+                  class="q-pa-none"
+                  ><q-icon name="check_circle" size="xs"
+                /></q-badge>
                 <q-tooltip>Le titre est correct</q-tooltip>
               </q-btn>
               <q-btn v-if="reply.isArtistCorrect" round flat>
                 <q-icon name="person" size="sm" />
-                <q-badge v-if="reply.isArtistCorrect" floating color="green">
-                  <q-icon name="check_circle" />
-                </q-badge>
+                <q-badge
+                  v-if="reply.isArtistCorrect"
+                  floating
+                  rounded
+                  color="green"
+                  class="q-pa-none"
+                  ><q-icon name="check_circle" size="xs"
+                /></q-badge>
                 <q-tooltip>L'artiste est correct</q-tooltip>
               </q-btn>
             </template>
