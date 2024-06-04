@@ -1,18 +1,20 @@
 <template>
-  <q-btn round flat>
+  <q-btn round flat @click="tooltipShown = !tooltipShown">
     <q-icon :name="icon" size="sm" />
-    <q-badge rounded floating color="green">
-      <q-icon name="check_circle" />
+    <q-badge rounded floating color="green" class="q-pa-none">
+      <q-icon name="check_circle" size="xs" />
     </q-badge>
-    <q-tooltip>{{ tooltipText }}</q-tooltip>
+    <q-tooltip v-model="tooltipShown">{{ tooltipText }}</q-tooltip>
   </q-btn>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
 
-const props = defineProps({
+defineProps({
   icon: String,
   tooltipText: String
 })
+
+const tooltipShown = ref(false)
 </script>
