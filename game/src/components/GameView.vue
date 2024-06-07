@@ -38,7 +38,7 @@ async function guess() {
 
     <q-form v-else>
       <q-page @submit="guess" class="column">
-        <q-scroll-area class="col-grow">
+        <q-scroll-area class="col-grow" style="height: 100ch">
           <q-chat-message
             v-for="(reply, index) in gameState.replies"
             :key="index"
