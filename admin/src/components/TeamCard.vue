@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type Team from '@/types/team'
 
-const props = defineProps<{
+defineProps<{
   team: Team
 }>()
 </script>
 <template>
   <q-card>
-    <q-card-section class="bg-purple text-white">
+    <q-card-section class="bg-purple text-white row items-center">
       <span class="text-h4">{{ team.name }}</span>
+      <q-space />
+      <span class="text-h4">{{ team.score }}</span>
     </q-card-section>
     <q-card-section>
       <ul>

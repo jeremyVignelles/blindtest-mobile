@@ -14,7 +14,10 @@ const { isConnected, playerRegistered, gameState, teamJoined, teamName } =
       <q-toolbar>
         <template v-if="teamJoined">
           <q-toolbar-title>Équipe {{ teamName }}</q-toolbar-title>
-          <span>{{ gameState?.currentTurn }} / {{ gameState?.totalSteps }}</span>
+          <span
+            >{{ gameState?.score }} pts - Tour {{ gameState?.currentTurn }} /
+            {{ gameState?.totalSteps }}</span
+          >
         </template>
         <q-toolbar-title v-else>Rejoignez la partie !</q-toolbar-title>
       </q-toolbar>

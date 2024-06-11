@@ -42,7 +42,8 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
       globalState.value.teams.push({
         id: teamId,
         name: teamName,
-        members: []
+        members: [],
+        score: 0
       })
       cb(teamId)
     })
@@ -53,6 +54,11 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
       if (currentTurn > 0) {
         const turn = globalState.value.turns[currentTurn - 1]
         const teamId = socket.data.teamId
+        const team = globalState.value.teams.find((t) => t.id === teamId)
+        if (!team) {
+          ack({ error: 'Équipe non trouvée' })
+          return
+        }
         if (teamId && turn.acceptAnswers) {
           if (!turn.teamReplies[teamId]) {
             turn.teamReplies[teamId] = []
@@ -66,6 +72,15 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
             ack({ isAlreadyTried: true })
           } else {
             const result = check(globalState.value.steps[currentTurn - 1], lowerGuess)
+            const points =
+              (result.isArtistCorrect &&
+              !turn.teamReplies[teamId].some((reply) => reply.isArtistCorrect)
+                ? 1
+                : 0) +
+              (result.isTitleCorrect &&
+              !turn.teamReplies[teamId].some((reply) => reply.isTitleCorrect)
+                ? 1
+                : 0)
             turn.teamReplies[teamId].push({
               answer: guess,
               time: +new Date(),
@@ -73,7 +88,8 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
               isArtistCorrect: result.isArtistCorrect,
               isTitleCorrect: result.isTitleCorrect
             })
-            ack({ isAlreadyTried: false, ...result })
+            team.score += points
+            ack({ isAlreadyTried: false, ...result, points })
           }
         } else {
           ack({ error: 'Pas de tour en cours' })

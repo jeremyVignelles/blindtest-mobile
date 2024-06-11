@@ -5,6 +5,7 @@ export interface ValidationGuessResult {
   isAlreadyTried: false
   isTitleCorrect: boolean
   isArtistCorrect: boolean
+  points: number
 }
 export interface ErrorGuessResult {
   error: string
