@@ -1,21 +1,26 @@
 import type { Server } from 'socket.io'
 import type GlobalGameState from '../common/types/globalGameState'
-import { effect, computed, type ReactiveEffectRunner, type Ref } from '@vue/reactivity'
+import { computed, type Ref } from '@vue/reactivity'
 import type TeamState from '../common/types/teamState'
+import { debouncedWatch } from '../debouncedWatch'
+import type { WatchStopHandle } from '@vue-reactivity/watch'
 
 export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
-  const teamsState = computed<Record<string, TeamState>>(() => {
-    const state: Record<string, TeamState> = {}
-    const currentTurn = globalState.value.turns.length
-    const totalSteps = globalState.value.steps.length
-    const turn = currentTurn > 0 ? globalState.value.turns[currentTurn - 1] : null
-    const step = totalSteps > 0 ? globalState.value.steps[currentTurn - 1] : null
-    globalState.value.teams.forEach((team) => {
+  const rooms: Record<string, WatchStopHandle> = {}
+  io.of('/').adapter.on('create-room', (room: string) => {
+    const teamState = computed<TeamState | null>(() => {
+      const team = globalState.value.teams.find((team) => team.id === room)
+      if (!team) return null
+
+      const currentTurn = globalState.value.turns.length
+      const totalSteps = globalState.value.steps.length
+      const turn = currentTurn > 0 ? globalState.value.turns[currentTurn - 1] : null
+      const step = totalSteps > 0 ? globalState.value.steps[currentTurn - 1] : null
       const teamHasFoundArtist =
         turn?.teamReplies[team.id]?.some((reply) => reply.isArtistCorrect) ?? false
       const teamHasFoundTitle =
         turn?.teamReplies[team.id]?.some((reply) => reply.isTitleCorrect) ?? false
-      state[team.id] = {
+      return {
         name: team.name,
         members: team.members,
         score: team.score,
@@ -27,21 +32,20 @@ export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
         replies: turn?.teamReplies[team.id] ?? []
       }
     })
-    return state
-  })
-
-  const rooms: Record<string, ReactiveEffectRunner> = {}
-  io.of('/').adapter.on('create-room', (room: string) => {
-    rooms[room] = effect(() => {
-      const roomState = teamsState.value[room] // TODO: I think this will trigger a refresh too often
-      if (roomState) {
-        io.of('/').to(room).emit('state', roomState)
-      }
-    })
+    rooms[room] = debouncedWatch(
+      teamState,
+      (roomState) => {
+        if (roomState) {
+          io.of('/').to(room).emit('state', roomState)
+        }
+      },
+      50,
+      { immediate: true }
+    )
   })
 
   io.of('/').adapter.on('delete-room', (room: string) => {
-    rooms[room].effect.stop()
+    rooms[room]()
     delete rooms[room]
   })
 }

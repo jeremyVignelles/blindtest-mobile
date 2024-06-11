@@ -2,16 +2,21 @@ import type { Server } from 'socket.io'
 import type GlobalGameState from '../common/types/globalGameState'
 import { randomUUID } from 'crypto'
 import makeLogger from '../logger'
-import { type Ref, effect, computed } from '@vue/reactivity'
+import { type Ref, computed } from '@vue/reactivity'
 import type { GuessResult } from '../common/types/guessResult'
 import { check } from '../check'
+import { debouncedWatch } from '../debouncedWatch'
 
 export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
   const teams = computed(() => globalState.value.teams)
 
-  effect(() => {
-    io.of('/').emit('teams', teams.value)
-  })
+  debouncedWatch(
+    teams,
+    (t) => {
+      io.of('/').emit('teams', t)
+    },
+    50
+  )
   const gs = io.of('/')
   gs.on('connection', (socket) => {
     socket.data.playerId = randomUUID()
