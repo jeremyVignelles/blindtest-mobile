@@ -130,8 +130,8 @@ function uploadFile(value: File) {
             <q-card-section class="bg-purple text-white q-pa-sm">
               <span class="text-h5">??</span>
             </q-card-section>
-            <q-card-section>
-              <ul>
+            <q-card-section class="q-pa-sm">
+              <ul class="q-my-none">
                 <li v-for="player in gameStore.globalGameState.unjoinedPlayers" :key="player.id">
                   {{ player.name }}
                 </li>

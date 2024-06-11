@@ -54,8 +54,8 @@ const backgroundClass = computed(() => {
       <q-space />
       <q-btn dense size="md" flat round @click="editScore">{{ team.score }}</q-btn>
     </q-card-section>
-    <q-card-section>
-      <ul>
+    <q-card-section class="q-pa-sm">
+      <ul class="q-my-none">
         <li v-for="player in team.members" :key="player.id">
           {{ player.name }}
         </li>
