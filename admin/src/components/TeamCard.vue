@@ -23,10 +23,10 @@ async function editScore() {
 </script>
 <template>
   <q-card>
-    <q-card-section class="bg-purple text-white text-h4 row items-center">
-      <span>{{ team.name }}</span>
+    <q-card-section class="bg-purple text-white row items-center q-pa-sm">
+      <span class="text-h5">{{ team.name }}</span>
       <q-space />
-      <q-btn dense flat round class="text-h5" @click="editScore">{{ team.score }}</q-btn>
+      <q-btn dense size="md" flat round @click="editScore">{{ team.score }}</q-btn>
     </q-card-section>
     <q-card-section>
       <ul>
