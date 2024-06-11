@@ -23,6 +23,10 @@ const hasNextTurn = computed(() => {
   return gameStore.globalGameState.turns.length < gameStore.globalGameState.steps.length
 })
 
+const sortedTeams = computed(() => {
+  return gameStore.globalGameState.teams.slice().sort((a, b) => b.score - a.score)
+})
+
 function uploadFile(value: File) {
   const reader = new FileReader()
   reader.onload = () => {
@@ -118,7 +122,7 @@ function uploadFile(value: File) {
 
     <q-drawer side="right" :modelValue="true" class="q-pa-sm" :width="600">
       <div class="column q-gutter-md">
-        <div v-for="team in gameStore.globalGameState.teams" :key="team.id">
+        <div v-for="team in sortedTeams" :key="team.id">
           <team-card :team="team" />
         </div>
         <div v-if="gameStore.globalGameState.unjoinedPlayers.length > 0">
