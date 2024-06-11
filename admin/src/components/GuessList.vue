@@ -11,29 +11,24 @@ const props = defineProps<{
 const socketService = inject(socketSymbol)!
 
 const aggregatedGuesses = computed(() => {
-  const guesses = Object.entries(props.guesses).flatMap(([key, replies]) =>
-    replies.map((r, index) => ({ ...r, teamId: key, index }))
+  const guesses = Object.entries(props.guesses).flatMap(([teamId, replies]) =>
+    replies.map((r) => ({ ...r, teamsId: [teamId], id: r.answer.toLowerCase() }))
   )
   guesses.sort((a, b) => a.time - b.time)
-  return guesses
+
+  // remove duplicates
+  const alreadySeen = new Set<string>()
+  return guesses.filter((guess) => {
+    if (alreadySeen.has(guess.id)) return false
+    alreadySeen.add(guess.id)
+    return true
+  })
 })
-
-function setTitleCorrect(guess: TeamReply, newValue: boolean) {
-  socketService.setTitleCorrect(guess.answer, newValue)
-}
-
-function setArtistCorrect(guess: TeamReply, newValue: boolean) {
-  socketService.setArtistCorrect(guess.answer, newValue)
-}
-
-function setRefused(guess: TeamReply, newValue: boolean) {
-  socketService.setRefused(guess.answer, newValue)
-}
 </script>
 <template>
   <main class="q-pa-md">
     <q-list separator>
-      <q-item v-for="guess in aggregatedGuesses" :key="guess.teamId + '-' + guess.index">
+      <q-item v-for="guess in aggregatedGuesses" :key="guess.id">
         <q-item-section>
           <q-item-label>{{ guess.answer }}</q-item-label>
         </q-item-section>
@@ -44,21 +39,21 @@ function setRefused(guess: TeamReply, newValue: boolean) {
               color="green"
               tooltipText="Titre correct ?"
               :modelValue="guess.isTitleCorrect"
-              @update:modelValue="setTitleCorrect(guess, $event)"
+              @update:modelValue="socketService.setTitleCorrect(guess.answer, $event)"
             />
             <GuessButton
               icon="person"
               color="green"
               tooltipText="Artiste correct ?"
               :modelValue="guess.isArtistCorrect"
-              @update:modelValue="setArtistCorrect(guess, $event)"
+              @update:modelValue="socketService.setArtistCorrect(guess.answer, $event)"
             />
             <GuessButton
               icon="block"
               color="red"
               tooltipText="Réponse refusée ?"
               :modelValue="guess.isRefused"
-              @update:modelValue="setRefused(guess, $event)"
+              @update:modelValue="socketService.setRefused(guess.answer, $event)"
             />
           </div>
         </q-item-section>
