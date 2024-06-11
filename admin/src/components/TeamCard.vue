@@ -1,16 +1,32 @@
 <script setup lang="ts">
 import type Team from '@/types/team'
+import { useQuasar } from 'quasar'
+import { socketSymbol } from '@/plugins/socket'
+import { inject } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   team: Team
 }>()
+
+const $q = useQuasar()
+const socketService = inject(socketSymbol)!
+
+async function editScore() {
+  const component = (await import('@/components/EditScoreDialog.vue')).default
+  $q.dialog({
+    component: component,
+    componentProps: { team: props.team }
+  }).onOk((newScore: number) => {
+    socketService.setScore(props.team.id, newScore)
+  })
+}
 </script>
 <template>
   <q-card>
-    <q-card-section class="bg-purple text-white row items-center">
-      <span class="text-h4">{{ team.name }}</span>
+    <q-card-section class="bg-purple text-white text-h4 row items-center">
+      <span>{{ team.name }}</span>
       <q-space />
-      <span class="text-h4">{{ team.score }}</span>
+      <q-btn dense flat round class="text-h5" @click="editScore">{{ team.score }}</q-btn>
     </q-card-section>
     <q-card-section>
       <ul>

@@ -10,6 +10,7 @@ export interface SocketService {
   nextTurn: () => void
   stopTurn: () => void
   loadGame: (steps: GameStep[]) => void
+  setScore: (teamId: string, score: number) => void
 }
 
 export const socketSymbol = Symbol('socket') as InjectionKey<SocketService>
@@ -51,6 +52,9 @@ const plugin: Plugin = function (app) {
     },
     loadGame(steps: GameStep[]) {
       socket.emit('load', steps)
+    },
+    setScore(teamId: string, score: number) {
+      socket.emit('setScore', teamId, score)
     }
   }
 

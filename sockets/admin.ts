@@ -57,5 +57,13 @@ export function useAdminSocket(io: Server, globalState: Ref<GlobalGameState>) {
         globalState.value.turns[currentTurn - 1].acceptAnswers = false
       }
     })
+
+    socket.on('setScore', (teamId, score) => {
+      logger.log('setScore', teamId, score)
+      const team = globalState.value.teams.find((t) => t.id === teamId)
+      if (team) {
+        team.score = score
+      }
+    })
   })
 }
