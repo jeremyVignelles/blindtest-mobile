@@ -71,7 +71,15 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
           ) {
             ack({ isAlreadyTried: true })
           } else {
-            const result = check(globalState.value.steps[currentTurn - 1], lowerGuess)
+            const result = {
+              ...check(globalState.value.steps[currentTurn - 1], lowerGuess),
+              ...globalState.value.currentTurnCorrectnessOverrides[lowerGuess]
+            }
+            // Ensure coherence between the admin and the player
+            if (result.isRefused) {
+              result.isArtistCorrect = false
+              result.isTitleCorrect = false
+            }
             const points =
               (result.isArtistCorrect &&
               !turn.teamReplies[teamId].some((reply) => reply.isArtistCorrect)
@@ -86,7 +94,8 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
               time: +new Date(),
               author: socket.data.playerId,
               isArtistCorrect: result.isArtistCorrect,
-              isTitleCorrect: result.isTitleCorrect
+              isTitleCorrect: result.isTitleCorrect,
+              isRefused: result.isRefused ?? false
             })
             team.score += points
             ack({ isAlreadyTried: false, ...result, points })

@@ -8,7 +8,8 @@ export const useGameStore = defineStore('game', () => {
     teams: [],
     unjoinedPlayers: [],
     steps: [],
-    turns: []
+    turns: [],
+    currentTurnCorrectnessOverrides: {}
   })
 
   return {

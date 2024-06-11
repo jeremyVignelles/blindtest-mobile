@@ -5,6 +5,7 @@ import { socketSymbol } from '@/plugins/socket'
 import TeamCard from '@/components/TeamCard.vue'
 import type { QFile } from 'quasar'
 import type GameStep from './types/gameStep'
+import GuessesList from './components/GuessList.vue'
 const gameStore = useGameStore()
 
 const socketService = inject(socketSymbol)!
@@ -117,7 +118,7 @@ function uploadFile(value: File) {
     </q-drawer>
 
     <q-page-container>
-      <main class="q-pa-md">Hello</main>
+      <GuessesList v-if="currentTurn" :guesses="currentTurn.teamReplies" />
     </q-page-container>
 
     <q-drawer side="right" :modelValue="true" class="q-pa-sm" :width="600">

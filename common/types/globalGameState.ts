@@ -16,4 +16,11 @@ export default interface GlobalGameState {
    * currentTurn.length <= steps.length
    */
   turns: Turn[]
+  /**
+   * The admin-set correctness of the current turn's guesses
+   */
+  currentTurnCorrectnessOverrides: Record<
+    string,
+    { isTitleCorrect: boolean; isArtistCorrect: boolean; isRefused: boolean }
+  >
 }

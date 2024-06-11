@@ -10,7 +10,8 @@ export function useSockets(io: Server) {
     teams: [],
     unjoinedPlayers: [],
     steps: [],
-    turns: []
+    turns: [],
+    currentTurnCorrectnessOverrides: {}
   })
 
   useAdminSocket(io, globalState)

@@ -11,6 +11,9 @@ export interface SocketService {
   stopTurn: () => void
   loadGame: (steps: GameStep[]) => void
   setScore: (teamId: string, score: number) => void
+  setTitleCorrect: (guess: string, isCorrect: boolean) => void
+  setArtistCorrect: (guess: string, isCorrect: boolean) => void
+  setRefused: (guess: string, isRefused: boolean) => void
 }
 
 export const socketSymbol = Symbol('socket') as InjectionKey<SocketService>
@@ -55,6 +58,15 @@ const plugin: Plugin = function (app) {
     },
     setScore(teamId: string, score: number) {
       socket.emit('setScore', teamId, score)
+    },
+    setTitleCorrect(guess: string, isCorrect: boolean) {
+      socket.emit('setTitleCorrect', guess, isCorrect)
+    },
+    setArtistCorrect(guess: string, isCorrect: boolean) {
+      socket.emit('setArtistCorrect', guess, isCorrect)
+    },
+    setRefused(guess: string, isRefused: boolean) {
+      socket.emit('setRefused', guess, isRefused)
     }
   }
 

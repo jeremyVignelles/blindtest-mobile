@@ -4,4 +4,5 @@ export default interface TeamReply {
   time: number
   isTitleCorrect: boolean
   isArtistCorrect: boolean
+  isRefused: boolean
 }
