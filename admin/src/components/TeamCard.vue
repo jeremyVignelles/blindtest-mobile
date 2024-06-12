@@ -3,9 +3,12 @@ import type Team from '@/types/team'
 import { useQuasar, type Color } from 'quasar'
 import { socketSymbol } from '@/plugins/socket'
 import { inject, computed } from 'vue'
+import CorrectGuessIndicator from './CorrectGuessIndicator.vue'
 
 const props = defineProps<{
   team: Team
+  currentStepTitleCorrect: boolean
+  currentStepArtistCorrect: boolean
 }>()
 
 const $q = useQuasar()
@@ -52,6 +55,17 @@ const backgroundClass = computed(() => {
     <q-card-section class="text-white row items-center q-pa-sm" :class="backgroundClass">
       <span class="text-h5">{{ team.name }}</span>
       <q-space />
+
+      <correct-guess-indicator
+        v-if="currentStepTitleCorrect"
+        icon="label"
+        tooltip-text="Le titre est correct"
+      />
+      <correct-guess-indicator
+        v-if="currentStepArtistCorrect"
+        icon="person"
+        tooltip-text="L'artiste est correct"
+      />
       <q-btn dense size="md" flat round @click="editScore">{{ team.score }}</q-btn>
     </q-card-section>
     <q-card-section class="q-pa-sm">

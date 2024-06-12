@@ -6,6 +6,7 @@ import TeamCard from '@/components/TeamCard.vue'
 import type { QFile } from 'quasar'
 import type GameStep from './types/gameStep'
 import GuessesList from './components/GuessList.vue'
+import type Team from './types/team'
 const gameStore = useGameStore()
 
 const socketService = inject(socketSymbol)!
@@ -27,6 +28,15 @@ const hasNextTurn = computed(() => {
 const sortedTeams = computed(() => {
   return gameStore.globalGameState.teams.slice().sort((a, b) => b.score - a.score)
 })
+
+function teamCardProps(team: Team) {
+  const currentStepReplies = currentTurn.value?.teamReplies[team.id]
+  return {
+    team,
+    currentStepTitleCorrect: currentStepReplies?.some((reply) => reply.isTitleCorrect) ?? false,
+    currentStepArtistCorrect: currentStepReplies?.some((reply) => reply.isArtistCorrect) ?? false
+  }
+}
 
 function uploadFile(value: File) {
   const reader = new FileReader()
@@ -64,10 +74,10 @@ function uploadFile(value: File) {
 
         <q-toolbar-title> Blindtest Mobile Admin </q-toolbar-title>
 
-        <span
-          >{{ gameStore.globalGameState.turns.length }} /
-          {{ gameStore.globalGameState.steps.length }}</span
-        >
+        <span>
+          {{ gameStore.globalGameState.turns.length }} /
+          {{ gameStore.globalGameState.steps.length }}
+        </span>
         <q-btn
           v-if="gameStore.globalGameState.steps.length === 0"
           dense
@@ -123,7 +133,7 @@ function uploadFile(value: File) {
         <q-scroll-area class="col">
           <div class="column q-pa-sm q-gutter-md">
             <div v-for="team in sortedTeams" :key="team.id">
-              <team-card :team="team" />
+              <team-card v-bind="teamCardProps(team)" />
             </div>
             <div v-if="gameStore.globalGameState.unjoinedPlayers.length > 0">
               <q-card>
