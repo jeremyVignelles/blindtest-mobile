@@ -62,7 +62,7 @@ export function useAdminSocket(io: Server, globalState: Ref<GlobalGameState>) {
       }
     })
 
-    socket.on('setScore', (teamId, score) => {
+    socket.on('setScore', (teamId: string, score: number) => {
       logger.log('setScore', teamId, score)
       const team = globalState.value.teams.find((t) => t.id === teamId)
       if (team) {
@@ -70,17 +70,17 @@ export function useAdminSocket(io: Server, globalState: Ref<GlobalGameState>) {
       }
     })
 
-    socket.on('setTitleCorrect', (guess, isCorrect) => {
+    socket.on('setTitleCorrect', (guess: string, isCorrect: boolean) => {
       logger.log('setTitleCorrect', guess, isCorrect)
       setGuessCorrectness(guess, 'isTitleCorrect', isCorrect)
     })
 
-    socket.on('setArtistCorrect', (guess, isCorrect) => {
+    socket.on('setArtistCorrect', (guess: string, isCorrect: boolean) => {
       logger.log('setArtistCorrect', guess, isCorrect)
       setGuessCorrectness(guess, 'isArtistCorrect', isCorrect)
     })
 
-    socket.on('setRefused', (guess, isRefused) => {
+    socket.on('setRefused', (guess: string, isRefused: boolean) => {
       logger.log('setRefused', guess, isRefused)
       setGuessCorrectness(guess, 'isRefused', isRefused)
     })
