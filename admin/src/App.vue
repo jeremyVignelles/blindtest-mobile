@@ -119,9 +119,7 @@ function uploadFile(value: File) {
 
     <q-page-container>
       <q-page class="row">
-        <q-scroll-area class="col">
-          <GuessesList v-if="currentTurn" :guesses="currentTurn.teamReplies" />
-        </q-scroll-area>
+        <GuessesList v-if="currentTurn" :guesses="currentTurn.teamReplies" />
         <q-scroll-area class="col">
           <div class="column q-pa-sm q-gutter-md">
             <div v-for="team in sortedTeams" :key="team.id">

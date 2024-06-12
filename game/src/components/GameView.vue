@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject, watch } from 'vue'
+import { ref, inject, watch, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useGameStore } from '@/stores/gameStore'
 import { socketSymbol } from '@/plugins/socket'
@@ -50,6 +50,10 @@ watch(
     }
   }
 )
+
+onMounted(() => {
+  scrollArea.value?.setScrollPercentage('vertical', 1, 0)
+})
 </script>
 
 <template>
