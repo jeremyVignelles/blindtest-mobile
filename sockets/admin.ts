@@ -1,23 +1,29 @@
-import { type Ref, effect } from '@vue/reactivity'
+import { type Ref } from '@vue/reactivity'
 import type { Server } from 'socket.io'
 import type GlobalGameState from '../common/types/globalGameState'
 import { randomUUID } from 'crypto'
 import makeLogger from '../logger'
 import type Team from '../common/types/team'
 import type TeamReply from '../common/types/teamReply'
+import { debouncedWatch } from '../debouncedWatch'
 
 export function useAdminSocket(io: Server, globalState: Ref<GlobalGameState>) {
   const adms = io.of('/admin')
   adms.on('connection', (socket) => {
     const logger = makeLogger('admin ' + randomUUID())
     logger.log('connected')
-    const updateStateEffect = effect(() => {
-      socket.emit('state', globalState.value)
-    })
+    const stopGlobalStateWatch = debouncedWatch(
+      globalState,
+      (state: GlobalGameState) => {
+        socket.emit('state', state)
+      },
+      50,
+      { immediate: true }
+    )
 
     socket.on('disconnect', () => {
       logger.log('disconnected')
-      updateStateEffect.effect.stop()
+      stopGlobalStateWatch()
     })
 
     socket.on('reset', () => {
