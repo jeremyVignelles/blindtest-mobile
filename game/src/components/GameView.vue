@@ -59,13 +59,13 @@ onMounted(() => {
 <template>
   <template v-if="gameState">
     <q-page v-if="gameState.currentTurn === 0" class="flex flex-center">
-      <h1>En attente de démarrage...</h1>
+      <h2 class="text-center">En attente de démarrage...</h2>
     </q-page>
     <q-page
       v-else-if="gameState.currentTurn === gameState.totalSteps && !gameState.acceptAnswers"
       class="flex flex-center"
     >
-      <h1>Fin du jeu !</h1>
+      <h2 class="text-center">Fin du jeu !</h2>
     </q-page>
 
     <q-form v-else>
