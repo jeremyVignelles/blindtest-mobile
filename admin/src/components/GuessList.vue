@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type TeamReply from '@/types/teamReply'
-import { computed, inject, onMounted, ref, watch } from 'vue'
+import { computed, inject, ref } from 'vue'
 import GuessButton from './GuessButton.vue'
 import { socketSymbol } from '@/plugins/socket'
-import { debounce, type QScrollArea } from 'quasar'
+import { type QScrollArea } from 'quasar'
+import { useScrollToBottom } from '@/composables/scrollToBottom'
 
 const props = defineProps<{
   guesses: Record<string, TeamReply[]>
@@ -11,6 +12,8 @@ const props = defineProps<{
 
 const socketService = inject(socketSymbol)!
 const scrollArea = ref<QScrollArea>()
+
+useScrollToBottom(scrollArea)
 
 const aggregatedGuesses = computed(() => {
   const guesses = Object.entries(props.guesses).flatMap(([teamId, replies]) =>
@@ -26,40 +29,9 @@ const aggregatedGuesses = computed(() => {
     return true
   })
 })
-
-let hasScrolledRecently = false
-const debouncedHasScrolledRecently = debounce(() => {
-  hasScrolledRecently = false
-}, 1000)
-
-function onScrolling() {
-  hasScrolledRecently = true
-  debouncedHasScrolledRecently()
-}
-
-function nextFrame() {
-  return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
-}
-
-watch(
-  () => aggregatedGuesses.value?.length ?? 0,
-  async () => {
-    if (!hasScrolledRecently) {
-      // Wait for the next browser UI refresh. It seems to take 2 frames to get the correct scrollHeight
-      await nextFrame()
-      await nextFrame()
-
-      scrollArea.value?.setScrollPercentage('vertical', 1, 300)
-    }
-  }
-)
-
-onMounted(() => {
-  scrollArea.value?.setScrollPercentage('vertical', 1, 0)
-})
 </script>
 <template>
-  <q-scroll-area ref="scrollArea" class="col" @scroll="onScrolling">
+  <q-scroll-area ref="scrollArea" class="col">
     <q-list separator>
       <q-item v-for="guess in aggregatedGuesses" :key="guess.id">
         <q-item-section>
