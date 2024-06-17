@@ -5,6 +5,7 @@ import { useGameStore } from '@/stores/gameStore'
 import { socketSymbol } from '@/plugins/socket'
 import CorrectGuessIndicator from './CorrectGuessIndicator.vue'
 import { debounce, type QInput, type QScrollArea } from 'quasar'
+import { useResizeObserver } from '@vueuse/core'
 
 const socketService = inject(socketSymbol)!
 
@@ -15,8 +16,13 @@ const message = ref('')
 const scrollArea = ref<QScrollArea>()
 const guessInput = ref<QInput>()
 
+useResizeObserver(scrollArea, () => {
+  scrollArea.value?.setScrollPercentage('vertical', 1, 300)
+})
+
 async function guess() {
   if (!message.value) return
+  guessInput.value?.focus()
   const result = await socketService.guess(message.value)
   // TODO : do something with result, other than logging it
   console.log(result)
@@ -68,8 +74,8 @@ onMounted(() => {
       <h2 class="text-center">Fin du jeu !</h2>
     </q-page>
 
-    <q-form v-else>
-      <q-page @submit="guess" class="column no-wrap">
+    <q-form v-else @submit="guess">
+      <q-page class="column no-wrap">
         <q-scroll-area ref="scrollArea" @scroll="onScrolling" style="flex: 1 1 1px">
           <q-chat-message
             v-for="(reply, index) in gameState.replies"
@@ -105,7 +111,13 @@ onMounted(() => {
           label="Proposition"
         >
           <template v-slot:append>
-            <q-btn icon="send" type="submit" @click="guess" color="primary" />
+            <q-btn
+              icon="send"
+              type="submit"
+              @click="guess"
+              @touchend.prevent="guess"
+              color="primary"
+            />
           </template>
         </q-input>
       </q-page>
