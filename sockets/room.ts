@@ -20,6 +20,9 @@ export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
         turn?.teamReplies[team.id]?.some((reply) => reply.isArtistCorrect) ?? false
       const teamHasFoundTitle =
         turn?.teamReplies[team.id]?.some((reply) => reply.isTitleCorrect) ?? false
+
+      const hasArtist = !!step?.artist
+      const hasTitle = !!step?.title
       return {
         name: team.name,
         members: team.members,
@@ -27,8 +30,10 @@ export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
         currentTurn: currentTurn,
         totalSteps: totalSteps,
         acceptAnswers: turn?.acceptAnswers ?? false,
-        waitingForArtist: !!step?.artist && !teamHasFoundArtist,
-        waitingForTitle: !!step?.title && !teamHasFoundTitle,
+        hasArtist: hasArtist,
+        artist: hasArtist && (teamHasFoundArtist || !turn?.acceptAnswers) ? step.artist! : null,
+        hasTitle: hasTitle,
+        title: hasTitle && (teamHasFoundTitle || !turn?.acceptAnswers) ? step.title! : null,
         replies: turn?.teamReplies[team.id] ?? []
       }
     })

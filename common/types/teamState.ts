@@ -15,12 +15,23 @@ export default interface TeamState {
   totalSteps: number
   acceptAnswers: boolean
   /**
-   * The title has not yet been revealed (and there is a title to be found)
+   * There is a title to be found
    */
-  waitingForTitle: boolean
+  hasTitle: boolean
+
   /**
-   * The artist has not yet been revealed (and there is an artist to be found)
+   * The title of the song, if it has been revealed
    */
-  waitingForArtist: boolean
+  title: string | null
+
+  /**
+   * There is an artist to be found
+   */
+  hasArtist: boolean
+
+  /**
+   * The artist of the song, if it has been revealed
+   */
+  artist: string | null
   replies: TeamReply[]
 }
