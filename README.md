@@ -18,25 +18,11 @@ popd
 
 ## Running
 
-Server:
-
 ```bash
-bun --watch run index.ts
-```
-
-Frontend game:
-
-```bash
-cd game
 bun run dev
 ```
 
-Frontend admin:
-
-```bash
-cd admin
-bun run dev
-```
+This will launch the back, the admin and the game concurrently
 
 ## Events
 

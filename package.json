@@ -2,8 +2,12 @@
   "name": "blindtestmobile",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "concurrently -n back,game,admin \"bun run index.ts\" \"cd game && npm run dev\" \"cd admin && npm run dev\""
+  },
   "devDependencies": {
-    "@types/node": "^20.14.2"
+    "@types/node": "^20.14.2",
+    "concurrently": "^8.2.2"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
