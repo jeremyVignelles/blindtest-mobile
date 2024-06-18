@@ -141,7 +141,7 @@ function uploadFile(value: File) {
           <GuessesList :guesses="currentTurn.teamReplies" />
         </div>
         <q-scroll-area class="col">
-          <div class="column q-pa-sm q-gutter-md">
+          <div class="column q-pa-xs q-gutter-md">
             <div v-for="team in sortedTeams" :key="team.id">
               <team-card v-bind="teamCardProps(team)" />
             </div>

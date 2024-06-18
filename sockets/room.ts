@@ -16,13 +16,39 @@ export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
       const totalSteps = globalState.value.steps.length
       const turn = currentTurn > 0 ? globalState.value.turns[currentTurn - 1] : null
       const step = totalSteps > 0 ? globalState.value.steps[currentTurn - 1] : null
-      const teamHasFoundArtist =
-        turn?.teamReplies[team.id]?.some((reply) => reply.isArtistCorrect) ?? false
-      const teamHasFoundTitle =
-        turn?.teamReplies[team.id]?.some((reply) => reply.isTitleCorrect) ?? false
+
+      const lastFoundArtistGuess = turn?.teamReplies[team.id]?.findLast(
+        (reply) => reply.isArtistCorrect
+      )
+      const lastFoundTitleGuess = turn?.teamReplies[team.id]?.findLast(
+        (reply) => reply.isTitleCorrect
+      )
 
       const hasArtist = !!step?.artist
       const hasTitle = !!step?.title
+
+      let returnedTitle = null
+      let returnedArtist = null
+
+      if (hasTitle) {
+        if (!turn?.acceptAnswers) {
+          // The turn is finished, show the answer
+          returnedTitle = step.title!
+        } else if (lastFoundTitleGuess) {
+          // Show the answer as it was input by the user
+          returnedTitle = lastFoundTitleGuess.answer
+        }
+      }
+
+      if (hasArtist) {
+        if (!turn?.acceptAnswers) {
+          // The turn is finished, show the answer
+          returnedArtist = step.artist!
+        } else if (lastFoundArtistGuess) {
+          // Show the answer as it was input by the user
+          returnedArtist = lastFoundArtistGuess?.answer
+        }
+      }
       return {
         name: team.name,
         members: team.members,
@@ -31,9 +57,9 @@ export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
         totalSteps: totalSteps,
         acceptAnswers: turn?.acceptAnswers ?? false,
         hasArtist: hasArtist,
-        artist: hasArtist && (teamHasFoundArtist || !turn?.acceptAnswers) ? step.artist! : null,
+        artist: returnedArtist,
         hasTitle: hasTitle,
-        title: hasTitle && (teamHasFoundTitle || !turn?.acceptAnswers) ? step.title! : null,
+        title: returnedTitle,
         replies: turn?.teamReplies[team.id] ?? []
       }
     })
