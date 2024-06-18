@@ -19,16 +19,7 @@ const guessInput = ref<QInput>()
 
 const guessInputDisabled = computed(() => {
   // If the game is not started or if the game is not accepting answers, disable the input
-  if (!gameState.value || !gameState.value.acceptAnswers) return true
-
-  // If there is still a title to be found, the input is enabled
-  if (gameState.value.hasTitle && !gameState.value.title) return false
-
-  // same for the artist
-  if (gameState.value.hasArtist && !gameState.value.artist) return false
-
-  // Otherwise, it is disabled
-  return true
+  return !gameState.value || !gameState.value.acceptAnswers
 })
 
 useScrollToBottom(scrollArea)
