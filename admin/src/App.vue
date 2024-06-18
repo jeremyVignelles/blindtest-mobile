@@ -7,6 +7,7 @@ import type { QFile } from 'quasar'
 import type GameStep from './types/gameStep'
 import GuessesList from './components/GuessList.vue'
 import type Team from './types/team'
+import AnswerDisplay from './components/AnswerDisplay.vue'
 const gameStore = useGameStore()
 
 const socketService = inject(socketSymbol)!
@@ -18,7 +19,13 @@ const currentTurn = computed(() => {
   if (gameStore.globalGameState.turns.length === 0) {
     return null
   } else {
-    return gameStore.globalGameState.turns[gameStore.globalGameState.turns.length - 1]
+    return {
+      ...gameStore.globalGameState.turns[gameStore.globalGameState.turns.length - 1],
+      title:
+        gameStore.globalGameState.steps[gameStore.globalGameState.turns.length - 1].title ?? null,
+      artist:
+        gameStore.globalGameState.steps[gameStore.globalGameState.turns.length - 1].artist ?? null
+    }
   }
 })
 const hasNextTurn = computed(() => {
@@ -129,7 +136,10 @@ function uploadFile(value: File) {
 
     <q-page-container>
       <q-page class="row">
-        <GuessesList v-if="currentTurn" :guesses="currentTurn.teamReplies" />
+        <div v-if="currentTurn" class="col column">
+          <AnswerDisplay :title="currentTurn.title" :artist="currentTurn.artist" />
+          <GuessesList :guesses="currentTurn.teamReplies" />
+        </div>
         <q-scroll-area class="col">
           <div class="column q-pa-sm q-gutter-md">
             <div v-for="team in sortedTeams" :key="team.id">
