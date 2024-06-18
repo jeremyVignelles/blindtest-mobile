@@ -1,14 +1,14 @@
 <script setup lang="ts">
 defineProps<{
   title: string | null
-  titleDisabled: boolean
+  titleDisabled?: boolean
   artist: string | null
-  artistDisabled: boolean
+  artistDisabled?: boolean
 }>()
 </script>
 
 <template>
-  <div class="row">
+  <div class="row no-wrap">
     <q-card
       v-if="!titleDisabled"
       class="col q-ma-xs q-pa-xs"
