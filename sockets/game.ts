@@ -34,9 +34,9 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
         globalState.value.unjoinedPlayers.splice(unjoinedPlayerIndex, 1)
       }
       globalState.value.teams.forEach((team) => {
-        const memberIndex = team.members.findIndex((m) => m.id === socket.data.playerId)
-        if (memberIndex !== -1) {
-          team.members.splice(memberIndex, 1)
+        const member = team.members.find((m) => m.id === socket.data.playerId)
+        if (member) {
+          member.isActive = false
         }
       })
     })
@@ -136,7 +136,8 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
       logger.log('register', playerName)
       globalState.value.unjoinedPlayers.push({
         id: socket.data.playerId,
-        name: playerName
+        name: playerName,
+        isActive: true
       })
       ack(socket.data.playerId)
     })
