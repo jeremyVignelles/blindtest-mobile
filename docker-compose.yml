@@ -6,7 +6,7 @@ services:
       labels:
         - 'traefik.http.routers.blindtest.rule=Host(`blindtest.cube45.fr`)'
         - 'traefik.http.routers.blindtest.tls.certResolver=default'
-        - 'traefik.http.services.blindtest.loadbalancer.server.port=80'
+        - 'traefik.http.services.blindtest.loadbalancer.server.port=8080'
         - 'traefik.enable=true'
         - 'traefik.http.routers.blindtest_http.rule=Host(`blindtest.cube45.fr`)'
         - 'traefik.http.middlewares.https_redirect.redirectscheme.scheme=https'
