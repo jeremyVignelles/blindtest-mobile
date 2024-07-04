@@ -6,6 +6,7 @@ import makeLogger from '../logger'
 import type Team from '../common/types/team'
 import type TeamReply from '../common/types/teamReply'
 import { debouncedWatch } from '../debouncedWatch'
+import { normalize } from '../check'
 
 export function useAdminSocket(io: Server, globalState: Ref<GlobalGameState>) {
   const adms = io.of('/admin')
@@ -96,7 +97,7 @@ export function useAdminSocket(io: Server, globalState: Ref<GlobalGameState>) {
       correctnessField: 'isTitleCorrect' | 'isArtistCorrect' | 'isRefused',
       newValue: boolean
     ) {
-      const lowerGuess = guess.toLowerCase()
+      const normalizedGuess = normalize(guess)
       const currentTurn = globalState.value.turns.length
       if (currentTurn === 0) return
 
@@ -104,7 +105,7 @@ export function useAdminSocket(io: Server, globalState: Ref<GlobalGameState>) {
       for (const teamId in turn.teamReplies) {
         const teamReplies = turn.teamReplies[teamId]
         const thisGuessFromThisTeam = teamReplies.find(
-          (reply) => reply.answer.toLowerCase() === lowerGuess
+          (reply) => normalize(reply.answer) === normalizedGuess
         )
         if (!thisGuessFromThisTeam) continue
         const team = globalState.value.teams.find((t) => t.id === teamId)
@@ -128,8 +129,8 @@ export function useAdminSocket(io: Server, globalState: Ref<GlobalGameState>) {
       }
 
       // Store in the overrides list
-      globalState.value.currentTurnCorrectnessOverrides[lowerGuess] = {
-        ...globalState.value.currentTurnCorrectnessOverrides[lowerGuess],
+      globalState.value.currentTurnCorrectnessOverrides[normalizedGuess] = {
+        ...globalState.value.currentTurnCorrectnessOverrides[normalizedGuess],
         [correctnessField]: newValue
       }
     }

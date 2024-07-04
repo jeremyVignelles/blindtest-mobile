@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto'
 import makeLogger from '../logger'
 import { type Ref, computed } from '@vue/reactivity'
 import type { GuessResult } from '../common/types/guessResult'
-import { check } from '../check'
+import { check, normalize } from '../check'
 import { debouncedWatch } from '../debouncedWatch'
 
 export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
@@ -68,17 +68,15 @@ export function useGameSocket(io: Server, globalState: Ref<GlobalGameState>) {
           if (!turn.teamReplies[teamId]) {
             turn.teamReplies[teamId] = []
           }
-          const lowerGuess: string = guess.toLocaleLowerCase()
+          const normalizedGuess: string = normalize(guess)
           if (
-            turn.teamReplies[teamId].some(
-              (reply) => reply.answer.toLocaleLowerCase() === lowerGuess
-            )
+            turn.teamReplies[teamId].some((reply) => normalize(reply.answer) === normalizedGuess)
           ) {
             ack({ isAlreadyTried: true })
           } else {
             const result = {
-              ...check(globalState.value.steps[currentTurn - 1], lowerGuess),
-              ...globalState.value.currentTurnCorrectnessOverrides[lowerGuess]
+              ...check(globalState.value.steps[currentTurn - 1], normalizedGuess),
+              ...globalState.value.currentTurnCorrectnessOverrides[normalizedGuess]
             }
             // Ensure coherence between the admin and the player
             if (result.isRefused) {
