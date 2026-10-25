@@ -1,4 +1,4 @@
-import { watch, type WatchSource, type WatchStopHandle } from '@vue-reactivity/watch'
+import { watch, type WatchSource, type WatchStopHandle } from '@vue/reactivity'
 
 export function debouncedWatch<T>(
   source: WatchSource<T>,

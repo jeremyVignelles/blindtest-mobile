@@ -1,20 +1,20 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1 AS base
+FROM oven/bun:1.4.4 AS base
 WORKDIR /usr/src/app
 
 # install dependencies into temp directory
 # this will cache them and speed up future builds
 FROM base AS install
-RUN mkdir -p /temp/{server,game,admin}
+RUN mkdir -p /temp/server /temp/game /temp/admin
 
 # install the server as production mode because we only need to run it
-COPY package.json bun.lockb /temp/server/
+COPY package.json bun.lock /temp/server/
 RUN cd /temp/server && bun install --frozen-lockfile --production
 
 # install the game and admin as development mode because we need to build them
-COPY admin/package.json admin/bun.lockb /temp/admin/
-COPY game/package.json game/bun.lockb /temp/game/
+COPY admin/package.json admin/bun.lock /temp/admin/
+COPY game/package.json game/bun.lock /temp/game/
 RUN cd /temp/admin && bun install --frozen-lockfile && \
     cd /temp/game && bun install --frozen-lockfile
 
@@ -35,7 +35,7 @@ RUN cd /usr/src/app/admin && bun run build-only && \
 # copy production dependencies and source code into final image
 FROM base AS release
 COPY --from=install /temp/server/node_modules node_modules
-COPY tsconfig.json package.json *.ts .
+COPY tsconfig.json package.json *.ts ./
 COPY common ./common
 COPY sockets ./sockets
 COPY --from=builder /usr/src/app/dist dist

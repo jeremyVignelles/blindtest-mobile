@@ -3,7 +3,7 @@ import type GlobalGameState from '../common/types/globalGameState'
 import { computed, type Ref } from '@vue/reactivity'
 import type TeamState from '../common/types/teamState'
 import { debouncedWatch } from '../debouncedWatch'
-import type { WatchStopHandle } from '@vue-reactivity/watch'
+import type { WatchStopHandle } from '@vue/reactivity'
 
 export function useRooms(io: Server, globalState: Ref<GlobalGameState>) {
   const rooms: Record<string, WatchStopHandle> = {}

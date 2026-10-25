@@ -8,7 +8,7 @@ The easiest way to install all dependencies is to use vscode in devcontainer mod
 
 ```bash
 bun install
-pushd client
+pushd game
 bun install
 popd
 pushd admin
@@ -17,6 +17,13 @@ popd
 ```
 
 ## Running
+
+Create a .env file with the environment variables:
+
+```
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+```
 
 ```bash
 bun run dev
